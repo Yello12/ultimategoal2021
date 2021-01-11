@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.subsystems.Drive;
 
 import java.util.function.DoubleSupplier;
 
@@ -10,7 +12,7 @@ import java.util.function.DoubleSupplier;
  */
 public class DefaultDrive extends CommandBase {
 
-    private final DriveSubsystem m_drive;
+    private final Drive m_drive;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
 
@@ -21,7 +23,7 @@ public class DefaultDrive extends CommandBase {
      * @param forward The control input for driving forwards/backwards
      * @param rotation The control input for turning
      */
-    public DefaultDrive(DriveSubsystem subsystem, DoubleSupplier forward, DoubleSupplier rotation) {
+    public DefaultDrive(Drive subsystem, DoubleSupplier forward, DoubleSupplier rotation) {
         m_drive = subsystem;
         m_forward = forward;
         m_rotation = rotation;
@@ -30,7 +32,7 @@ public class DefaultDrive extends CommandBase {
 
     @Override
     public void execute() {
-        m_drive.arcadeDrive( m_forward.getAsDouble(), m_rotation.getAsDouble());
+        m_drive.tankDrive( m_forward.getAsDouble(), -m_rotation.getAsDouble());
     }
 
 }
