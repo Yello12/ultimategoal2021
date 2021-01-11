@@ -16,7 +16,7 @@ public class Drive extends SubsystemBase {
     public class WheelState{
         double left;
         double right;
-        public WheelState(double _left, double _right){
+        public WheelState(double _left, double _right) {
             left = _left;
             right = _right;
         }
@@ -32,10 +32,10 @@ public class Drive extends SubsystemBase {
     }
 
     public enum Mode{
-        Idle,
-        Open,
-        ClosedVelocity,
-        ClosedPosition,
+        Idle, // stopped
+        Open, // raw voltage
+        ClosedVelocity, // velocity
+        ClosedPosition, // position
     }
 
     private final double WHEEL_DIAMETER;

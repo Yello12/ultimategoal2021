@@ -55,7 +55,7 @@ public class TeleopCommand extends CommandOpMode {
 
         drive = new Drive(left_drive, right_drive, imu, WHEEL_DIAMETER, DRIVE_CPR);
         shooter = new Shooter(back_flywheel, front_flywheel, SHOOTER_CPR);
-        drive_timed = new DriveTimed(drive, 5, 1);
+        time_drive = new DriveTimed(drive, 5, 1);
 
         driver_gamepad = new GamepadEx(gamepad1);
         turn_button = new GamepadButton(driver_gamepad, GamepadKeys.Button.A);
@@ -65,13 +65,13 @@ public class TeleopCommand extends CommandOpMode {
 
         time_drive_button.whenPressed(time_drive);
 
-        drive_command = new DefaultDrive(drive, () -> driver_gamepad.getLeftY(), () -> driver_gamepad.getRightX());
+        drive_command = new DefaultDrive(drive, driver_gamepad);
         flywheel_joystick = new FlywheelJoystick(shooter, () -> driver_gamepad.getLeftY());
 //        turn_button.whenPressed(turn_command);
 //        dist_button.whenPressed(new DriveToDistance(drive, 0.5));
-        shooter.setDefaultCommand(flywheel_joystick);
+//        shooter.setDefaultCommand(flywheel_joystick);
 
-//        drive.setDefaultCommand(drive_command);
+        drive.setDefaultCommand(drive_command);
     }
 
 

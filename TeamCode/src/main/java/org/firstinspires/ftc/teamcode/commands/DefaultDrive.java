@@ -1,38 +1,26 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 
 import java.util.function.DoubleSupplier;
 
-/**
- * A command to drive the robot with joystick input (passed in as {@link DoubleSupplier}s). Written
- * explicitly for pedagogical purposes.
- */
 public class DefaultDrive extends CommandBase {
 
     private final Drive m_drive;
-    private final DoubleSupplier m_forward;
-    private final DoubleSupplier m_rotation;
+    private GamepadEx driver_gamepad;
 
-    /**
-     * Creates a new DefaultDrive.
-     *
-     * @param subsystem The drive subsystem this command wil run on.
-     * @param forward The control input for driving forwards/backwards
-     * @param rotation The control input for turning
-     */
-    public DefaultDrive(Drive subsystem, DoubleSupplier forward, DoubleSupplier rotation) {
+    public DefaultDrive(Drive subsystem, GamepadEx _driver_gamepad) {
         m_drive = subsystem;
-        m_forward = forward;
-        m_rotation = rotation;
+        GamepadEx driver_gamepad = _driver_gamepad;
         addRequirements(m_drive);
     }
 
     @Override
     public void execute() {
-        m_drive.tankDrive( m_forward.getAsDouble(), -m_rotation.getAsDouble());
+        m_drive.tankDrive( driver_gamepad.getLeftY(), -driver_gamepad.getRightX());
     }
 
 }
