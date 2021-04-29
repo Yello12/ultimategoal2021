@@ -9,18 +9,19 @@ import java.util.function.DoubleSupplier;
 
 public class DefaultDrive extends CommandBase {
 
-    private final Drive m_drive;
-    private GamepadEx driver_gamepad;
+    private final Drive drive;
+    private GamepadEx gamepad;
 
-    public DefaultDrive(Drive subsystem, GamepadEx _driver_gamepad) {
-        m_drive = subsystem;
-        GamepadEx driver_gamepad = _driver_gamepad;
-        addRequirements(m_drive);
+    public DefaultDrive(Drive _drive, GamepadEx _gamepad) {
+        drive = _drive;
+        gamepad = _gamepad;
+        addRequirements(drive);
     }
 
     @Override
     public void execute() {
-        m_drive.tankDrive( driver_gamepad.getLeftY(), -driver_gamepad.getRightX());
+        drive.tankDrive(-gamepad.getLeftY(), gamepad.getRightX());
+
     }
 
 }

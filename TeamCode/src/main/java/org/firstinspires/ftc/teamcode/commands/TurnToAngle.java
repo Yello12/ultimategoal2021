@@ -7,17 +7,25 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.utils.PIDF;
+import org.firstinspires.ftc.teamcode.utils.Units;
 import org.firstinspires.ftc.teamcode.utils.Utils;
+
+import java.util.function.DoubleSupplier;
+
+import kotlin.Unit;
 
 public class TurnToAngle extends CommandBase {
 
-    private final double KP = 0.5;
-    private final double KI = 0.0;
-    private final double KD = 0.0;
+    private final double KP = 1.7;
+    private final double KI = 0.02;
+    private final double KD = 0.1;
     private final double KF = 0.0;
-    private final double tolerance = Math.toRadians(5);
-    private final double min_output = 0.15;
-    private final double max_output = 0.5;
+    private final double tolerance = 5 * Units.DEGREES;
+    private final double time_tolerance = 0.1;
+    private final double min_output = 0.2;
+    private final double max_output = 1.0;
+    private double start_time = Double.POSITIVE_INFINITY;
+    private boolean is_at_before = false;
 
     private PIDF pidf;
 
@@ -53,12 +61,15 @@ public class TurnToAngle extends CommandBase {
 
     @Override
     public void execute() {
-        double power = pidf.calculate(drive.getHeading());
-        dashboardTelemetry.addData("turn_pidf_power", power);
-        power = Utils.reverseClamp(power, -min_output, min_output);
-        dashboardTelemetry.addData("turn_pidf_power_clamped", power);
-        dashboardTelemetry.addData("turn_pidf_error",Math.toDegrees(pidf.getError()));
-        drive.setOpenPower(power, -power);
+        double power = pidf.calculate(drive.getHeading(), 0.02);
+//        dashboardTelemetry.addData("turn_pidf_power", power);
+//        power = Utils.reverseClamp(power, -min_output, min_output);
+//        dashboardTelemetry.addData("turn_pidf_power_clamped", power);
+//        dashboardTelemetry.addData("turn_pidf_error", pidf.getError() * Units.TO_DEGREES);
+        power = 0.4;
+        drive.setOpenPower(-power, power);
+//        dashboardTelemetry.update();
+
     }
 
     @Override
@@ -69,7 +80,17 @@ public class TurnToAngle extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return pidf.atSetpoint();
+        boolean is_at_now = pidf.atSetpoint();
+//        if (!is_at_before && is_at_now) {
+//            start_time = (double) System.nanoTime() / 1E9;
+//        }
+//        double elapsed = (double) System.nanoTime() / 1E9 - start_time;
+//        dashboardTelemetry.addData("turn pidf time", elapsed);
+//        if (elapsed >= time_tolerance && is_at_now) {
+//            return true;
+//        }
+//        is_at_before = is_at_now;
+        return is_at_now;
     }
 
 }

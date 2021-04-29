@@ -2,17 +2,19 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.robotcore.internal.webserver.WebObserver;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.subsystems.WobbleArm;
 
-public class DriveTimed extends CommandBase {
+public class PulseArm extends CommandBase {
 
-    private Drive drive;
+    private WobbleArm wobble_arm;
     private double time_length;
     private double speed;
     private double init_timestamp;
 
-    public DriveTimed(Drive _drive, double _time_length, double _speed) {
-        drive = _drive;
+    public PulseArm(WobbleArm _wobble_arm, double _time_length, double _speed) {
+        wobble_arm = _wobble_arm;
         time_length = _time_length;
         speed = _speed;
     }
@@ -24,7 +26,7 @@ public class DriveTimed extends CommandBase {
 
     @Override
     public void execute() {
-        drive.setOpenPower(speed,speed);
+        wobble_arm.setOutput(speed);
     }
 
     @Override
@@ -35,6 +37,6 @@ public class DriveTimed extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-        drive.stop();
+        wobble_arm.setOutput(0.0);
     }
 }

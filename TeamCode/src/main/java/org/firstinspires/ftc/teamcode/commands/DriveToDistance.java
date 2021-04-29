@@ -1,46 +1,62 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.PIDF;
+import org.firstinspires.ftc.teamcode.utils.Units;
 import org.firstinspires.ftc.teamcode.utils.Utils;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 
 public class DriveToDistance extends CommandBase {
 
-    private final double KP = 0.5;
-    private final double KI = 0.0;
-    private final double KD = 0.0;
-    private final double KF = 0.0;
+
     private final double tolerance = 0.05;
-    private final double min_output = 0.1;
-    private final double max_output = 0.35;
+    private final double speed;
 
     private PIDF pidf;
 
     private Drive drive;
-    private double distance;
+    private double desired_distance;
+    private double start_distance;
+    private double start_left;
+    private double start_right;
 
+    private double TURN_KP = 1.0;
 
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    private Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-    public DriveToDistance(Drive subsystem, double _distance) {
-        distance = _distance;
+    public DriveToDistance(Drive subsystem, double _distance, double _speed) {
         drive = subsystem;
-        pidf = new PIDF(KP, KI, KD, KF);
-        pidf.setOutputRange(-max_output, max_output);
-        pidf.setTolerance(tolerance);
+        desired_distance = _distance;
+        speed = _speed;
+    }
+
+    public double getLeft() {
+        return drive.getLeftEncoderDistance() - start_left;
+    }
+
+    public double getRight() {
+        return drive.getRightEncoderDistance() - start_right;
     }
 
     @Override
     public void initialize() {
-        pidf.setSetpoint(drive.getAverageEncoderDistance()+distance);
+        start_distance = drive.getAverageEncoderDistance();
+        start_left = drive.getLeftEncoderDistance();
+        start_right = drive.getRightEncoderDistance();
+//        desired_distance += start_distance;
     }
 
     @Override
     public void execute() {
-        double power = pidf.calculate(drive.getAverageEncoderDistance());
-        power = Utils.reverseClamp(power,-min_output,min_output);
-        drive.setOpenPower(power, power);
+        double error = getLeft() - getRight();
+        double turn_power = TURN_KP * error;
+        drive.setOpenPower(speed - turn_power, speed + turn_power);
+        dashboardTelemetry.addData("Distance", (getLeft()+getRight())/2.0);
+
     }
 
     @Override
@@ -51,7 +67,8 @@ public class DriveToDistance extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return pidf.atSetpoint();
+        double distance = (getLeft()+getRight())/2.0;
+        return Math.abs(distance - desired_distance) <= tolerance;
     }
 
 }
